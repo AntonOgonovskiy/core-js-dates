@@ -159,8 +159,16 @@ function isDateInPeriod(/* date, period */) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  const data = new Date(date);
+  const hours =
+    data.getUTCHours() > 12 ? data.getUTCHours() - 12 : data.getUTCHours();
+  const minutes =
+    data.getMinutes() >= 10 ? data.getMinutes() : `${data.getMinutes()}0`;
+  const seconds =
+    data.getSeconds() >= 10 ? data.getSeconds() : `0${data.getSeconds()}`;
+  const aMpM = data.getUTCHours() >= 12 ? 'PM' : 'AM';
+  return `${data.getMonth() + 1}/${data.getUTCDate()}/${data.getFullYear()}, ${hours}:${minutes}:${seconds} ${aMpM}`;
 }
 
 /**
