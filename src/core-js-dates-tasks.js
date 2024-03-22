@@ -144,8 +144,11 @@ function getCountDaysOnPeriod(dateStart, dateEnd) {
  * '2024-02-02', { start: '2024-02-02', end: '2024-03-02' } => true
  * '2024-02-10', { start: '2024-02-02', end: '2024-03-02' } => true
  */
-function isDateInPeriod(/* date, period */) {
-  throw new Error('Not implemented');
+function isDateInPeriod(date, period) {
+  const checkDate = new Date(date);
+  const startDate = new Date(period.start);
+  const endDate = new Date(period.end);
+  return checkDate >= startDate && checkDate <= endDate;
 }
 
 /**
@@ -183,8 +186,18 @@ function formatDate(date) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  const days = new Date(year, month, 0).getDate();
+  let count = 0;
+  for (let i = 1; i <= days; i += 1) {
+    if (
+      new Date(year, month - 1, i).getDay() === 0 ||
+      new Date(year, month - 1, i).getDay() === 6
+    ) {
+      count += 1;
+    }
+  }
+  return count;
 }
 
 /**
@@ -200,8 +213,10 @@ function getCountWeekendsInMonth(/* month, year */) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
+function getWeekNumberByDate(date) {
+  const newYear = new Date(date.getFullYear(), 0, 1);
+  const days = (date - newYear) / (24 * 3600 * 1000);
+  return Math.ceil((days + 1 + newYear.getUTCDay()) / 7);
 }
 
 /**
@@ -215,8 +230,16 @@ function getWeekNumberByDate(/* date */) {
  * Date(2024, 0, 13) => Date(2024, 8, 13)
  * Date(2023, 1, 1) => Date(2023, 9, 13)
  */
-function getNextFridayThe13th(/* date */) {
-  throw new Error('Not implemented');
+function getNextFridayThe13th(date) {
+  const year = date.getFullYear();
+  let month = date.getMonth();
+  const fear = 13;
+  let friday13 = new Date(year, month, fear);
+  while (friday13.getDay() !== 5) {
+    month += 1;
+    friday13 = new Date(year, month, fear);
+  }
+  return friday13;
 }
 
 /**
@@ -230,10 +253,20 @@ function getNextFridayThe13th(/* date */) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(/* date */) {
-  throw new Error('Not implemented');
+function getQuarter(date) {
+  const month = date.getMonth();
+  let quarter = 0;
+  if (month < 4) {
+    quarter = 1;
+  } else if (month > 3 && month < 7) {
+    quarter = 2;
+  } else if (month > 6 && month < 10) {
+    quarter = 3;
+  } else {
+    quarter = 4;
+  }
+  return quarter;
 }
-
 /**
  * Generates an employee's work schedule within a specified date range, based on a pattern of working and off days.
  * The start and end dates of the period are inclusive.
@@ -252,8 +285,26 @@ function getQuarter(/* date */) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  let firstDay = new Date(period.start);
+  let lastDay = period.end.split('-').reverse();
+  lastDay[1] -= 1;
+  lastDay = new Date(...lastDay);
+  let workDays = countWorkDays;
+  let acc = 0;
+  const res = [];
+  while (firstDay.getTime() <= lastDay.getTime()) {
+    if (workDays > 0) {
+      res.push(firstDay.toLocaleDateString('es-CL'));
+      acc = firstDay.getDate() + 1;
+      workDays -= 1;
+    } else {
+      workDays = countWorkDays;
+      acc = firstDay.getDate() + countOffDays;
+    }
+    firstDay = new Date(firstDay.setDate(acc));
+  }
+  return res;
 }
 
 /**
