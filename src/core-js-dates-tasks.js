@@ -217,7 +217,7 @@ function getWeekNumberByDate(date) {
   let count = 1;
   const beginYear = new Date(date.getFullYear(), 0, 1);
   while (beginYear.getTime() !== date.getTime()) {
-    if (beginYear.getDay() === 6) {
+    if (beginYear.getDay() === 0) {
       count += 1;
     }
     beginYear.setDate(beginYear.getDate() + 1);
