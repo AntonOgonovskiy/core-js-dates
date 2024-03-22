@@ -52,7 +52,7 @@ function getTime(date) {
  * '2024-01-30T00:00:00.000Z' => 'Tuesday'
  */
 function getDayName(date) {
-  const day = new Date(date).getDay();
+  const day = new Date(date).getUTCDay();
   switch (day) {
     case 0:
       return 'Sunday';
@@ -83,7 +83,7 @@ function getDayName(date) {
  * Date('2024-02-16T00:00:00Z') => Date('2024-02-23T00:00:00Z')
  */
 function getNextFriday(date) {
-  const day = new Date(date).getDay();
+  const day = new Date(date).getUTCDay();
   let nextFriday;
   if (day === 5) {
     nextFriday = date.setDate(date.getDate() + 7);
@@ -214,8 +214,8 @@ function getCountWeekendsInMonth(month, year) {
  * Date(2024, 1, 23) => 8
  */
 function getWeekNumberByDate(date) {
-  const newYear = new Date(date.getFullYear(), 0, 1);
-  const days = (date - newYear) / (24 * 3600 * 1000);
+  const newYear = new Date(date.getUTCFullYear(), 0, 1);
+  const days = Math.round((date - newYear) / (24 * 3600 * 1000));
   return Math.ceil((days + 1 + newYear.getUTCDay()) / 7);
 }
 
